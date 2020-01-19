@@ -18,5 +18,5 @@ class Spaceship:
         window.blit(self.image, (self.rect.x, self.rect.y))
 
     def shoot(self):
-        valuables.BULLETS.append(Bullet(self.rect.x + 45, self.rect.y, -1))
-        valuables.BULLETS.append(Bullet(self.rect.x + 5, self.rect.y, -1))
+        valuables.BULLETS.append(Bullet(self.rect.x + 45, self.rect.y, -1, 10))
+        valuables.BULLETS.append(Bullet(self.rect.x + 5, self.rect.y, -1, 10))

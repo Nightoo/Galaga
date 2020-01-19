@@ -3,11 +3,11 @@ import valuables
 
 
 class Bullet:
-    def __init__(self, x, y, direction):
+    def __init__(self, x, y, direction, speed):
         self.rect = pygame.Rect(x, y, valuables.DEFAULT_BULLET, valuables.DEFAULT_BULLET)
         self.image = pygame.image.load('bullet.png')
         self.direction = direction
-        self.speed = 10
+        self.speed = speed
 
     def fly(self):
         self.rect.y += (self.speed * self.direction)
