@@ -4,13 +4,15 @@ from bullet import Bullet
 from spaceship import Spaceship
 import valuables
 pygame.init()
-pygame.time.set_timer(valuables.MYEVENTTYPE, 10)
+MYEVENTSPAWN = 10
+MYEVENTSHOOT = 11
+pygame.time.set_timer(MYEVENTSPAWN, valuables.ENEMYRESPAWNTIME)
+pygame.time.set_timer(MYEVENTSHOOT, valuables.ENEMYSHOOTTIME)
 SIZE = valuables.WIDTH, valuables.HEIGHT
 SCREEN = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 running = True
 FPS = 60
-MYEVENTTYPE = 5
 ship = Spaceship()
 
 while running:
@@ -18,19 +20,25 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a and 0 < ship.rect.x < valuables.WIDTH:
-                ship.move(-1)
-            if event.key == pygame.K_d and 0 <= ship.rect.x < valuables.WIDTH - 50:
-                ship.move(1)
             if event.key == pygame.K_SPACE:
                 ship.shoot()
-            if event.key == pygame.K_e:
-                enemy = Enemy()
-                enemy.spawn()
+        if event.type == MYEVENTSPAWN:
+            enemy = Enemy()
+            enemy.spawn()
+            enemy.shoot()
+
+        if event.type == MYEVENTSHOOT:
+            for enemy in valuables.ENEMIES:
                 enemy.shoot()
-        if event.type == MYEVENTTYPE:
-            print(True)
+    keystate = pygame.key.get_pressed()
+    ship.speed = 0
+    if keystate[pygame.K_a] and ship.rect.x > 0:
+        ship.speed = -8
+    if keystate[pygame.K_d] and ship.rect.x + 50 < valuables.WIDTH:
+        ship.speed = 8
+    ship.rect.x += ship.speed
 
     if len(valuables.ENEMIES) == 0:
         for i in range(valuables.COUNT_ENEMIES):
@@ -48,6 +56,8 @@ while running:
 
     for bullet in valuables.BULLETS:
         for enemy in valuables.ENEMIES:
+            if bullet.direction == 1 and bullet.rect.colliderect(enemy.hitbox):
+                continue
             if bullet.rect.colliderect(enemy.hitbox):
                 valuables.ENEMIES.remove(enemy)
                 valuables.BULLETS.remove(bullet)

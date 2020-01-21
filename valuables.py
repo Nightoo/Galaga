@@ -9,3 +9,6 @@ START_Y = 650
 DEFAULT_BULLET = 5
 SPACESHIPS = ['spaceship.png', 'spcshpv2.png']
 ALIENS = ['alien.png', 'alien2.png', 'alien3.png', 'alien4.png']
+COUNT_ENEMIES = 2
+ENEMYRESPAWNTIME = 5000
+ENEMYSHOOTTIME = 2500

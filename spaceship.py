@@ -8,11 +8,8 @@ class Spaceship:
     def __init__(self):
         self.rect = pygame.Rect(valuables.START_X, valuables.START_Y,
                                 valuables.WIDTH_OF_OBJECT, valuables.HEIGHT_OF_OBJECT)
-        self.speed = 50
+        self.speed = 0
         self.image = pygame.image.load(random.choice(valuables.SPACESHIPS))
-
-    def move(self, direction=1):
-        self.rect.x += (self.speed * direction)
 
     def draw(self, window):
         window.blit(self.image, (self.rect.x, self.rect.y))
