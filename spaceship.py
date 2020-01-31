@@ -17,3 +17,4 @@ class Spaceship:
     def shoot(self):
         valuables.BULLETS.append(Bullet(self.rect.x + 45, self.rect.y, -1, 10))
         valuables.BULLETS.append(Bullet(self.rect.x + 5, self.rect.y, -1, 10))
+        pygame.mixer.Sound('LAZER.wav').play()

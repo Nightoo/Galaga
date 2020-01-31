@@ -12,3 +12,5 @@ ALIENS = ['alien.png', 'alien2.png', 'alien3.png', 'alien4.png']
 COUNT_ENEMIES = 2
 ENEMYRESPAWNTIME = 5000
 ENEMYSHOOTTIME = 2500
+MYEVENTSPAWN = 10
+MYEVENTSHOOT = 11

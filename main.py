@@ -1,25 +1,23 @@
 import pygame, random, sys
 from enemy import Enemy
-from bullet import Bullet
 from spaceship import Spaceship
 import valuables
 pygame.init()
-MYEVENTSPAWN = 10
-MYEVENTSHOOT = 11
-pygame.time.set_timer(MYEVENTSPAWN, valuables.ENEMYRESPAWNTIME)
-pygame.time.set_timer(MYEVENTSHOOT, valuables.ENEMYSHOOTTIME)
+pygame.time.set_timer(valuables.MYEVENTSPAWN, valuables.ENEMYRESPAWNTIME)
+pygame.time.set_timer(valuables.MYEVENTSHOOT, valuables.ENEMYSHOOTTIME)
 SIZE = valuables.WIDTH, valuables.HEIGHT
 SCREEN = pygame.display.set_mode(SIZE)
-MENU = pygame.Surface(SIZE)
 clock = pygame.time.Clock()
 FPS = 60
 ship = Spaceship()
+pygame.mixer.init()
+pygame.mixer.music.load('music.mp3')
+pygame.mixer.music.play()
+pygame.mixer.music.set_volume(0.4)
+
 
 def mainn():
     intro_text = ['Начать игру', 'Выйти']
-    pygame.mixer.init()
-    pygame.mixer.music.load('music\\menu.mp3')
-    pygame.mixer.music.play(-1)
     SCREEN.fill((0, 0, 0))
 
     font_basic = pygame.font.Font(None, 40)
@@ -55,6 +53,7 @@ def mainn():
         pygame.display.flip()
         clock.tick(FPS)
 
+
 def game():
     running = True
     while running:
@@ -66,12 +65,12 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     ship.shoot()
-            if event.type == MYEVENTSPAWN:
+            if event.type == valuables.MYEVENTSPAWN:
                 enemy = Enemy()
                 enemy.spawn()
                 enemy.shoot()
 
-            if event.type == MYEVENTSHOOT:
+            if event.type == valuables.MYEVENTSHOOT:
                 for enemy in valuables.ENEMIES:
                     enemy.shoot()
         keystate = pygame.key.get_pressed()
@@ -115,15 +114,13 @@ def game():
         clock.tick(FPS)
         pygame.display.flip()
 
+
 def terminate():
     pygame.quit()
     sys.exit()
 
 def restart():
     intro_text = ['GAME OVER', 'Заново', 'Выйти']
-    pygame.mixer.init()
-    pygame.mixer.music.load('music\\menu.mp3')
-    pygame.mixer.music.play(-1)
     SCREEN.fill((0, 0, 0))
 
     font_basic = pygame.font.Font(None, 40)
@@ -157,7 +154,9 @@ def restart():
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if 150 < event.pos[0] < 300 and 350 < event.pos[1] < 375:
+                if 150 < event.pos[0] < 370 and 350 < event.pos[1] < 380:
+                    valuables.ENEMIES = []
+                    valuables.BULLETS = []
                     game()
                 elif 150 < event.pos[0] < 270 and 420 < event.pos[1] < 440:
                     terminate()
