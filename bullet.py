@@ -3,9 +3,12 @@ import valuables
 
 
 class Bullet:
-    def __init__(self, x, y, direction, speed):
+    def __init__(self, x, y, direction, speed, owner):
         self.rect = pygame.Rect(x, y, valuables.DEFAULT_BULLET, valuables.DEFAULT_BULLET)
-        self.image = pygame.image.load('bullet.png')
+        if owner == 'ship':
+            self.image = pygame.image.load('bullet.png')
+        elif owner == 'enemy':
+            self.image = pygame.image.load('enemybullet.png')
         self.direction = direction
         self.speed = speed
 

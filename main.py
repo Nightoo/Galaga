@@ -1,5 +1,5 @@
 import pygame, random, sys
-from enemy import Enemy
+from enemy import Enemy, Green, Purple, Box, Star
 from spaceship import Spaceship
 import valuables
 pygame.init()
@@ -14,10 +14,11 @@ pygame.mixer.init()
 pygame.mixer.music.load('music.mp3')
 pygame.mixer.music.play()
 pygame.mixer.music.set_volume(0.4)
+font_basic = pygame.font.Font(None, 40)
 
 
-def mainn():
-    intro_text = ['Начать игру', 'Выйти']
+def main():
+    intro_text = ['Start', 'Exit']
     SCREEN.fill((0, 0, 0))
 
     font_basic = pygame.font.Font(None, 40)
@@ -56,6 +57,7 @@ def mainn():
 
 def game():
     running = True
+    hit = False
     while running:
         SCREEN.fill((0, 0, 0))
         for event in pygame.event.get():
@@ -65,8 +67,16 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     ship.shoot()
-            if event.type == valuables.MYEVENTSPAWN:
-                enemy = Enemy()
+            if event.type == valuables.MYEVENTSPAWN or len(valuables.ENEMIES) == 0:
+                pick = random.randint(1, 4)
+                if pick == 1:
+                    enemy = Green()
+                elif pick == 2:
+                    enemy = Purple()
+                elif pick == 3:
+                    enemy = Box()
+                elif pick == 4:
+                    enemy = Star()
                 enemy.spawn()
                 enemy.shoot()
 
@@ -75,19 +85,12 @@ def game():
                     enemy.shoot()
         keystate = pygame.key.get_pressed()
         ship.speed = 0
-        if keystate[pygame.K_a] and ship.rect.x > 0:
+        if keystate[pygame.K_a] and ship.hitbox.x > 0:
             ship.speed = -8
-        if keystate[pygame.K_d] and ship.rect.x + 50 < valuables.WIDTH:
+        if keystate[pygame.K_d] and ship.hitbox.x + 50 < valuables.WIDTH:
             ship.speed = 8
-        ship.rect.x += ship.speed
+        ship.hitbox.x += ship.speed
 
-        if len(valuables.ENEMIES) == 0:
-            for i in range(valuables.COUNT_ENEMIES):
-                enemy = Enemy()
-                enemy.spawn()
-                enemy.shoot()
-        if valuables.COUNT_ENEMIES == 2:
-            valuables.COUNT_ENEMIES = 1
         for enemy in valuables.ENEMIES:
             enemy.draw(SCREEN)
 
@@ -100,27 +103,58 @@ def game():
                 if bullet.direction == 1 and bullet.rect.colliderect(enemy.hitbox):
                     continue
                 if bullet.rect.colliderect(enemy.hitbox):
+                    enemy.health -= ship.damage
+                    if bullet not in valuables.BULLETS:
+                        continue
+                    else:
+                        valuables.BULLETS.remove(bullet)
+                if enemy.health <= 0:
                     valuables.ENEMIES.remove(enemy)
-                    valuables.BULLETS.remove(bullet)
-                    for i in range(valuables.COUNT_ENEMIES):
-                        enemy = Enemy()
-                        enemy.spawn()
-                        enemy.shoot()
-            if bullet.rect.colliderect(ship.rect):
-                running = False
-                restart()
+                    ship.health += 1
+                    pick = random.randint(1, 4)
+                    if pick == 1:
+                        enemy = Green()
+                    elif pick == 2:
+                        enemy = Purple()
+                    elif pick == 3:
+                        enemy = Box()
+                    elif pick == 4:
+                        enemy = Star()
+                    enemy.spawn()
+                    enemy.shoot()
+                    valuables.SCORE += enemy.scorepoints
+                if bullet.rect.colliderect(ship.hitbox):
+                    if bullet not in valuables.BULLETS:
+                        continue
+                    else:
+                        valuables.BULLETS.remove(bullet)
+                    ship.health -= enemy.damage
+                    if ship.health <= 0:
+                        running = False
+                        restart()
+
+        scoreboard = 'Score:' + str(valuables.SCORE)
+        scoreboard_rendered = font_basic.render(scoreboard, 1, pygame.Color('green'))
+        scoreboard_x = 10
+        scoreboard_y = valuables.HEIGHT - scoreboard_rendered.get_height()
+        SCREEN.blit(scoreboard_rendered, (scoreboard_x, scoreboard_y))
+
+        healthbar = 'Health:' + str(ship.health)
+        healthbar_rendered = font_basic.render(healthbar, 1, pygame.Color('green'))
+        healthbar_x = valuables.WIDTH // 2
+        healthbar_y = valuables.HEIGHT - healthbar_rendered.get_height()
+        SCREEN.blit(healthbar_rendered, (healthbar_x, healthbar_y))
 
         ship.draw(SCREEN)
         clock.tick(FPS)
         pygame.display.flip()
-
 
 def terminate():
     pygame.quit()
     sys.exit()
 
 def restart():
-    intro_text = ['GAME OVER', 'Заново', 'Выйти']
+    intro_text = ['GAME OVER', 'Restart', 'Exit']
     SCREEN.fill((0, 0, 0))
 
     font_basic = pygame.font.Font(None, 40)
@@ -149,6 +183,12 @@ def restart():
         else:
             SCREEN.blit(string_rendered, intro_rect)
 
+        scoreboard = 'Your score:' + str(valuables.SCORE)
+        scoreboard_rendered = font_basic.render(scoreboard, 1, pygame.Color('white'))
+        scoreboard_x = 150
+        scoreboard_y = 520 - scoreboard_rendered.get_height()
+        SCREEN.blit(scoreboard_rendered, (scoreboard_x, scoreboard_y))
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -157,6 +197,8 @@ def restart():
                 if 150 < event.pos[0] < 370 and 350 < event.pos[1] < 380:
                     valuables.ENEMIES = []
                     valuables.BULLETS = []
+                    valuables.SCORE = 0
+                    ship.health = 100
                     game()
                 elif 150 < event.pos[0] < 270 and 420 < event.pos[1] < 440:
                     terminate()
@@ -164,4 +206,4 @@ def restart():
         clock.tick(FPS)
 
 
-mainn()
+main()
