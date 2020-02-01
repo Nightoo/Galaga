@@ -54,10 +54,8 @@ def main():
         pygame.display.flip()
         clock.tick(FPS)
 
-
 def game():
     running = True
-    hit = False
     while running:
         SCREEN.fill((0, 0, 0))
         for event in pygame.event.get():
@@ -80,9 +78,9 @@ def game():
                 enemy.spawn()
                 enemy.shoot()
 
-            if event.type == valuables.MYEVENTSHOOT:
-                for enemy in valuables.ENEMIES:
-                    enemy.shoot()
+            #if event.type == valuables.MYEVENTSHOOT:
+              #  for enemy in valuables.ENEMIES:
+               #     enemy.shoot()
         keystate = pygame.key.get_pressed()
         ship.speed = 0
         if keystate[pygame.K_a] and ship.hitbox.x > 0:
@@ -97,6 +95,10 @@ def game():
         for bullet in valuables.BULLETS:
             bullet.fly()
             bullet.draw(SCREEN)
+
+        for enemy in valuables.ENEMIES:
+            if pygame.time.get_ticks() % enemy.delay == 0:
+                enemy.shoot()
 
         for bullet in valuables.BULLETS:
             for enemy in valuables.ENEMIES:
@@ -149,9 +151,11 @@ def game():
         clock.tick(FPS)
         pygame.display.flip()
 
+
 def terminate():
     pygame.quit()
     sys.exit()
+
 
 def restart():
     intro_text = ['GAME OVER', 'Restart', 'Exit']

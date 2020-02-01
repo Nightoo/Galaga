@@ -29,7 +29,9 @@ class Enemy:
         self.image = pygame.image.load(random.choice(valuables.ALIENS))
         self.health = 10
         self.damage = 20
+        self.bullet_speed = 0
         self.scorepoints = 1
+        self.delay = 0
 
     def draw(self, window):
         window.blit(self.image, (self.hitbox.x, self.hitbox.y))
@@ -39,7 +41,7 @@ class Enemy:
 
     def shoot(self):
         valuables.BULLETS.append(Bullet(self.hitbox.x + (valuables.WIDTH_OF_OBJECT / 2),
-                                        self.hitbox.y + valuables.HEIGHT_OF_OBJECT, 1, 5, 'enemy'))
+                                        self.hitbox.y + valuables.HEIGHT_OF_OBJECT, 1, self.bullet_speed, 'enemy'))
 
 class Green(Enemy):
     def __init__(self):
@@ -48,6 +50,8 @@ class Green(Enemy):
         self.health = 30
         self.damage = 10
         self.scorepoints = 2
+        self.bullet_speed = 4
+        self.delay = 50
 
 class Purple(Enemy):
     def __init__(self):
@@ -56,14 +60,20 @@ class Purple(Enemy):
         self.health = 10
         self.damage = 30
         self.scorepoints = 3
+        self.bullet_speed = 5
+        self.delay = 500
+
 
 class Box(Enemy):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('alien3.png')
         self.health = 80
-        self.damage = 5
+        self.damage = 1
         self.scorepoints = 5
+        self.bullet_speed = 8
+        self.delay = 1000
+
 
 class Star(Enemy):
     def __init__(self):
@@ -72,3 +82,5 @@ class Star(Enemy):
         self.health = 40
         self.damage = 40
         self.scorepoints = 7
+        self.bullet_speed = 2
+        self.delay = 100
