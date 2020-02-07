@@ -3,8 +3,7 @@ from enemy import Enemy, Green, Purple, Box, Star
 from spaceship import Spaceship
 import valuables
 pygame.init()
-pygame.time.set_timer(valuables.MYEVENTSPAWN, valuables.ENEMYRESPAWNTIME)
-pygame.time.set_timer(valuables.MYEVENTSHOOT, valuables.ENEMYSHOOTTIME)
+pygame.time.set_timer(valuables.EVENTSPAWN, valuables.ENEMYRESPAWNTIME)
 SIZE = valuables.WIDTH, valuables.HEIGHT
 SCREEN = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
@@ -65,22 +64,21 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     ship.shoot()
-            if event.type == valuables.MYEVENTSPAWN or len(valuables.ENEMIES) == 0:
-                pick = random.randint(1, 4)
-                if pick == 1:
-                    enemy = Green()
-                elif pick == 2:
-                    enemy = Purple()
-                elif pick == 3:
-                    enemy = Box()
-                elif pick == 4:
-                    enemy = Star()
-                enemy.spawn()
-                enemy.shoot()
+            if event.type == valuables.EVENTSPAWN or len(valuables.ENEMIES) == 0:
+                if len(valuables.ENEMIES) <= ((valuables.HEIGHT // 2 * valuables.WIDTH) //
+                                              (valuables.HEIGHT_OF_OBJECT * valuables.WIDTH_OF_OBJECT) // 2):
+                    pick = random.randint(1, 4)
+                    if pick == 1:
+                        enemy = Green()
+                    elif pick == 2:
+                        enemy = Purple()
+                    elif pick == 3:
+                        enemy = Box()
+                    elif pick == 4:
+                        enemy = Star()
+                    enemy.spawn()
+                    enemy.shoot()
 
-            #if event.type == valuables.MYEVENTSHOOT:
-              #  for enemy in valuables.ENEMIES:
-               #     enemy.shoot()
         keystate = pygame.key.get_pressed()
         ship.speed = 0
         if keystate[pygame.K_a] and ship.hitbox.x > 0:
@@ -96,36 +94,52 @@ def game():
             bullet.fly()
             bullet.draw(SCREEN)
 
+
+        if len(valuables.ENEMIES) > 0:
+            # 1000 and 100 are correct amount of ms
+            if pygame.time.get_ticks() % (1000 // len(valuables.ENEMIES) + 1) == 0:
+                (valuables.ENEMIES[random.randint(0, len(valuables.ENEMIES) - 1)]).shoot()
+        elif len(valuables.ENEMIES) > ((valuables.HEIGHT // 2 * valuables.WIDTH) //
+                                              (valuables.HEIGHT_OF_OBJECT * valuables.WIDTH_OF_OBJECT) // 6):
+            if pygame.time.get_ticks() % (10 // len(valuables.ENEMIES) + 1) == 0:
+                (valuables.ENEMIES[random.randint(0, len(valuables.ENEMIES) - 1)]).shoot()
+
         for enemy in valuables.ENEMIES:
             if pygame.time.get_ticks() % enemy.delay == 0:
+                print(len(valuables.ENEMIES))
                 enemy.shoot()
+            if enemy.health <= 0:
+                valuables.ENEMIES.remove(enemy)
+                ship.health += 1
+                pick = random.randint(1, 4)
+                if pick == 1:
+                    enemy = Green()
+                elif pick == 2:
+                    enemy = Purple()
+                elif pick == 3:
+                    enemy = Box()
+                elif pick == 4:
+                    enemy = Star()
+                if len(valuables.ENEMIES) <= ((valuables.HEIGHT // 2 * valuables.WIDTH) //
+                                              (valuables.HEIGHT_OF_OBJECT * valuables.WIDTH_OF_OBJECT) // 2):
+                    enemy.spawn()
+                    enemy.shoot()
+                    valuables.SCORE += enemy.scorepoints
 
         for bullet in valuables.BULLETS:
             for enemy in valuables.ENEMIES:
-                if bullet.direction == 1 and bullet.rect.colliderect(enemy.hitbox):
+                if bullet.direction == 1 and bullet.hitbox.colliderect(enemy.hitbox):
+                    if bullet in valuables.BULLETS:
+                        valuables.BULLETS.remove(bullet)
                     continue
-                if bullet.rect.colliderect(enemy.hitbox):
+                if bullet.hitbox.colliderect(enemy.hitbox):
                     enemy.health -= ship.damage
                     if bullet not in valuables.BULLETS:
                         continue
                     else:
                         valuables.BULLETS.remove(bullet)
-                if enemy.health <= 0:
-                    valuables.ENEMIES.remove(enemy)
-                    ship.health += 1
-                    pick = random.randint(1, 4)
-                    if pick == 1:
-                        enemy = Green()
-                    elif pick == 2:
-                        enemy = Purple()
-                    elif pick == 3:
-                        enemy = Box()
-                    elif pick == 4:
-                        enemy = Star()
-                    enemy.spawn()
-                    enemy.shoot()
-                    valuables.SCORE += enemy.scorepoints
-                if bullet.rect.colliderect(ship.hitbox):
+
+                if bullet.hitbox.colliderect(ship.hitbox):
                     if bullet not in valuables.BULLETS:
                         continue
                     else:
