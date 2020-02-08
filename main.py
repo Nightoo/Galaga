@@ -1,4 +1,6 @@
-import pygame, random, sys
+import pygame
+import random
+import sys
 from enemy import Enemy, Green, Purple, Box, Star
 from spaceship import Spaceship
 import valuables
@@ -20,7 +22,7 @@ def main():
     intro_text = ['Start', 'Exit']
     SCREEN.fill((0, 0, 0))
 
-    font_basic = pygame.font.Font(None, 40)
+    global font_basic
     text_coord = 200
     k = 0
 
@@ -40,8 +42,16 @@ def main():
         intro_rect.top = text_coord
         text_coord += intro_rect.height
         SCREEN.blit(string_rendered, intro_rect)
+    a = 400
+    text = ['A to move left', 'D to move right', 'Space to shoot']
+    for line in text:
+        string_rendered = font_basic.render(line, 1, pygame.Color('yellow'))
+        SCREEN.blit(string_rendered, (50, a))
+        a += 35
 
     while True:
+        startscreen = pygame.image.load('startscreen.png')
+        SCREEN.blit(startscreen, (50, 500))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -53,13 +63,19 @@ def main():
         pygame.display.flip()
         clock.tick(FPS)
 
+
 def game():
     running = True
     while running:
         SCREEN.fill((0, 0, 0))
+        for i in range(10):
+            x = random.randint(0, 400)
+            y = random.randint(0, 800)
+            pygame.draw.circle(SCREEN, (255, 255, 255), (x, y), 1)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                terminate()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -94,19 +110,17 @@ def game():
             bullet.fly()
             bullet.draw(SCREEN)
 
-
         if len(valuables.ENEMIES) > 0:
             # 1000 and 100 are correct amount of ms
             if pygame.time.get_ticks() % (1000 // len(valuables.ENEMIES) + 1) == 0:
                 (valuables.ENEMIES[random.randint(0, len(valuables.ENEMIES) - 1)]).shoot()
         elif len(valuables.ENEMIES) > ((valuables.HEIGHT // 2 * valuables.WIDTH) //
-                                              (valuables.HEIGHT_OF_OBJECT * valuables.WIDTH_OF_OBJECT) // 6):
+                                        (valuables.HEIGHT_OF_OBJECT * valuables.WIDTH_OF_OBJECT) // 6):
             if pygame.time.get_ticks() % (10 // len(valuables.ENEMIES) + 1) == 0:
                 (valuables.ENEMIES[random.randint(0, len(valuables.ENEMIES) - 1)]).shoot()
 
         for enemy in valuables.ENEMIES:
             if pygame.time.get_ticks() % enemy.delay == 0:
-                print(len(valuables.ENEMIES))
                 enemy.shoot()
             if enemy.health <= 0:
                 valuables.ENEMIES.remove(enemy)
@@ -128,11 +142,7 @@ def game():
 
         for bullet in valuables.BULLETS:
             for enemy in valuables.ENEMIES:
-                if bullet.direction == 1 and bullet.hitbox.colliderect(enemy.hitbox):
-                    if bullet in valuables.BULLETS:
-                        valuables.BULLETS.remove(bullet)
-                    continue
-                if bullet.hitbox.colliderect(enemy.hitbox):
+                if bullet.hitbox.colliderect(enemy.hitbox) and bullet.direction == -1:
                     enemy.health -= ship.damage
                     if bullet not in valuables.BULLETS:
                         continue
@@ -174,8 +184,10 @@ def terminate():
 def restart():
     intro_text = ['GAME OVER', 'Restart', 'Exit']
     SCREEN.fill((0, 0, 0))
+    endscreen = pygame.image.load('endscreen.png')
+    SCREEN.blit(endscreen, (50, 500))
 
-    font_basic = pygame.font.Font(None, 40)
+    global font_basic
     font_over = pygame.font.Font(None, 90)
     text_coord = 200
     k = 0
@@ -204,7 +216,7 @@ def restart():
         scoreboard = 'Your score:' + str(valuables.SCORE)
         scoreboard_rendered = font_basic.render(scoreboard, 1, pygame.Color('white'))
         scoreboard_x = 150
-        scoreboard_y = 520 - scoreboard_rendered.get_height()
+        scoreboard_y = 500 - scoreboard_rendered.get_height()
         SCREEN.blit(scoreboard_rendered, (scoreboard_x, scoreboard_y))
 
     while True:

@@ -12,10 +12,8 @@ class Enemy:
             while not self.allowed:
                 new_coord_y = random.randint(0, valuables.HEIGHT // 2)
                 new_coord_x = random.randint(0, valuables.WIDTH - valuables.WIDTH_OF_OBJECT)
-                new_coords = pygame.Rect(new_coord_x, new_coord_y,
-                                            valuables.WIDTH_OF_OBJECT,
-                                            valuables.HEIGHT_OF_OBJECT)
-                while self.is_ok(new_coords):
+                new_coord = pygame.Rect(new_coord_x, new_coord_y, valuables.WIDTH_OF_OBJECT, valuables.HEIGHT_OF_OBJECT)
+                while self.is_ok(new_coord):
                     self.x = new_coord_x
                     self.y = new_coord_y
                     self.allowed = True
@@ -29,9 +27,7 @@ class Enemy:
             self.y = random.randint(0, valuables.HEIGHT // 2)
             self.x = random.randint(0, valuables.WIDTH - valuables.WIDTH_OF_OBJECT)
 
-        self.hitbox = pygame.Rect(self.x, self.y,
-                                valuables.WIDTH_OF_OBJECT,
-                                valuables.HEIGHT_OF_OBJECT)
+        self.hitbox = pygame.Rect(self.x, self.y, valuables.WIDTH_OF_OBJECT, valuables.HEIGHT_OF_OBJECT)
         self.image = pygame.image.load(random.choice(valuables.ALIENS))
         self.health = 10
         self.damage = 20
@@ -53,26 +49,28 @@ class Enemy:
             valuables.ENEMIES.append(self)
 
     def shoot(self):
-        #1 means that enemy shoots towards the spaceship
+        # 1 means that enemy shoots towards the spaceship
         valuables.BULLETS.append(Bullet(self.hitbox.x + (valuables.WIDTH_OF_OBJECT / 2),
                                         self.hitbox.y + valuables.HEIGHT_OF_OBJECT, 1, self.bullet_speed, 'enemy'))
+
 
 class Green(Enemy):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('alien.png')
+        self.image = pygame.image.load(random.choice(['alien.png', 'alien6.png']))
         self.health = 30
-        self.damage = 5
+        self.damage = 10
         self.scorepoints = 2
         self.bullet_speed = 4
         self.delay = 51
 
+
 class Purple(Enemy):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('alien2.png')
+        self.image = pygame.image.load(random.choice(['alien2.png', 'alien7.png']))
         self.health = 10
-        self.damage = 5
+        self.damage = 10
         self.scorepoints = 3
         self.bullet_speed = 5
         self.delay = 67
@@ -81,9 +79,9 @@ class Purple(Enemy):
 class Box(Enemy):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('alien3.png')
+        self.image = pygame.image.load(random.choice(['alien3.png', 'alien5.png']))
         self.health = 80
-        self.damage = 5
+        self.damage = 10
         self.scorepoints = 5
         self.bullet_speed = 8
         self.delay = 74
@@ -92,9 +90,9 @@ class Box(Enemy):
 class Star(Enemy):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('alien4.png')
+        self.image = pygame.image.load(random.choice(['alien4.png', 'alien8.png']))
         self.health = 40
-        self.damage = 5
+        self.damage = 10
         self.scorepoints = 7
         self.bullet_speed = 2
         self.delay = 81
