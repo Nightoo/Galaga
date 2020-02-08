@@ -42,12 +42,12 @@ def main():
         intro_rect.top = text_coord
         text_coord += intro_rect.height
         SCREEN.blit(string_rendered, intro_rect)
-    a = 400
+    rules_coord = 400
     text = ['A to move left', 'D to move right', 'Space to shoot']
     for line in text:
         string_rendered = font_basic.render(line, 1, pygame.Color('yellow'))
-        SCREEN.blit(string_rendered, (50, a))
-        a += 35
+        SCREEN.blit(string_rendered, (50, rules_coord))
+        rules_coord += 35
 
     while True:
         startscreen = pygame.image.load('startscreen.png')
@@ -69,9 +69,9 @@ def game():
     while running:
         SCREEN.fill((0, 0, 0))
         for i in range(10):
-            x = random.randint(0, 400)
-            y = random.randint(0, 800)
-            pygame.draw.circle(SCREEN, (255, 255, 255), (x, y), 1)
+            star_x = random.randint(0, 400)
+            star_y = random.randint(0, 800)
+            pygame.draw.circle(SCREEN, (255, 255, 255), (star_x, star_y), 1)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
