@@ -24,21 +24,21 @@ def main():
 
     global font_basic
     text_coord = 200
-    k = 0
+    text_coords_factor = 0
 
     for line in intro_text:
         string_rendered = font_basic.render(line, 1, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
-        if k == 0:
+        if text_coords_factor == 0:
             intro_rect.x = 120
             text_coord += 80
-        elif k == 1:
+        elif text_coords_factor == 1:
             intro_rect.x = 120
             text_coord += 40
         else:
             text_coord += 40
             intro_rect.x = 150
-        k += 1
+            text_coords_factor += 1
         intro_rect.top = text_coord
         text_coord += intro_rect.height
         SCREEN.blit(string_rendered, intro_rect)
@@ -190,25 +190,25 @@ def restart():
     global font_basic
     font_over = pygame.font.Font(None, 90)
     text_coord = 200
-    k = 0
+    text_coords_factor = 0
 
     for line in intro_text:
         string_rendered = font_basic.render(line, 1, pygame.Color('white'))
         string_over = font_over.render(line, 1, pygame.Color('red'))
         intro_rect = string_rendered.get_rect()
-        if k == 0:
+        if text_coords_factor == 0:
             intro_rect.x = 15
             text_coord += 20
-        elif k == 1:
+        elif text_coords_factor == 1:
             intro_rect.x = 150
             text_coord += 100
         else:
             text_coord += 40
             intro_rect.x = 150
-        k += 1
+            text_coords_factor += 1
         intro_rect.top = text_coord
         text_coord += intro_rect.height
-        if k - 1 == 0:
+        if text_coords_factor - 1 == 0:
             SCREEN.blit(string_over, intro_rect)
         else:
             SCREEN.blit(string_rendered, intro_rect)
