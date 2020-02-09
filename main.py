@@ -38,7 +38,7 @@ def main():
         else:
             text_coord += 40
             intro_rect.x = 150
-            text_coords_factor += 1
+        text_coords_factor += 1
         intro_rect.top = text_coord
         text_coord += intro_rect.height
         SCREEN.blit(string_rendered, intro_rect)
@@ -205,7 +205,7 @@ def restart():
         else:
             text_coord += 40
             intro_rect.x = 150
-            text_coords_factor += 1
+        text_coords_factor += 1
         intro_rect.top = text_coord
         text_coord += intro_rect.height
         if text_coords_factor - 1 == 0:
